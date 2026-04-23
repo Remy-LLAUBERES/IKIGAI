@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon Ikigai</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap');
+
+  :root {
+    --passion:    #c0392b;
+    --mission:    #2980b9;
+    --vocation:   #27ae60;
+    --profession: #8e44ad;
+    --center:     #f39c12;
+    --bg:         #0d0d0d;
+    --card:       #141414;
+    --border:     #2a2a2a;
+    --text:       #e8e0d0;
+    --muted:      #7a7060;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: 0.4;
+  }
+
+  /* ── INTRO ── */
+  #screen-intro {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  #screen-intro h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    letter-spacing: 0.15em;
+    color: var(--center);
+    text-shadow: 0 0 60px rgba(243,156,18,0.25);
+    margin-bottom: 0.5rem;
+  }
+
+  #screen-intro .kanji {
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    letter-spacing: 0.4em;
+    color: var(--muted);
+    font-family: 'Cinzel', serif;
+    margin-bottom: 2.5rem;
+  }
+
+  #screen-intro p {
+    max-width: 520px;
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 0.8rem;
+    font-style: italic;
+  }
+
+  #screen-intro .definition {
+    max-width: 480px;
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+  }
+
+  .name-row {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    margin-bottom: 2rem;
+    width: 100%;
+    max-width: 380px;
+  }
+
+  .name-row input {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--text);
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.1rem;
+    padding: 0.6rem 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .name-row input:focus { border-color: var(--center); }
+  .name-row input::placeholder { color: var(--muted); font-style: italic; }
+
+  .btn-start {
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.65rem 2rem;
+    background: var(--center);
+    color: #000;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .btn-start:hover { background: #e67e22; }
+
+  .circles-preview {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .circle-badge {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid;
+    border-radius: 20px;
+    opacity: 0.7;
+  }
+  .circle-badge.p { color: var(--passion);    border-color: var(--passion); }
+  .circle-badge.m { color: var(--mission);    border-color: var(--mission); }
+  .circle-badge.v { color: var(--vocation);   border-color: var(--vocation); }
+  .circle-badge.r { color: var(--profession); border-color: var(--profession); }
+
+  /* ── APP ── */
+  #screen-app { display: none; }
+
+  header {
+    text-align: center;
+    padding: 2rem 1rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    letter-spacing: 0.1em;
+    color: var(--center);
+    text-shadow: 0 0 40px rgba(243,156,18,0.2);
+  }
+
+  header .for-name {
+    font-style: italic;
+    color: var(--muted);
+    margin-top: 0.3rem;
+    font-size: 1rem;
+  }
+
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.2rem 1rem;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.45rem 1.1rem;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+
+  .tab-btn:hover { color: var(--text); border-color: #555; }
+  .tab-btn.active[data-tab="passion"]    { color: var(--passion);    border-color: var(--passion);    box-shadow: 0 0 12px rgba(192,57,43,0.2); }
+  .tab-btn.active[data-tab="mission"]    { color: var(--mission);    border-color: var(--mission);    box-shadow: 0 0 12px rgba(41,128,185,0.2); }
+  .tab-btn.active[data-tab="vocation"]   { color: var(--vocation);   border-color: var(--vocation);   box-shadow: 0 0 12px rgba(39,174,96,0.2); }
+  .tab-btn.active[data-tab="profession"] { color: var(--profession); border-color: var(--profession); box-shadow: 0 0 12px rgba(142,68,173,0.2); }
+  .tab-btn.active[data-tab="diagram"]    { color: var(--center);     border-color: var(--center);     box-shadow: 0 0 12px rgba(243,156,18,0.2); }
+
+  .main { display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem 3rem; }
+
+  .panel { display: none; width: 100%; max-width: 700px; }
+  .panel.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .panel-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-bottom: 1.5rem;
+    border-left: 3px solid;
+    padding-left: 1rem;
+  }
+
+  .panel-header h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.25rem;
+    letter-spacing: 0.06em;
+  }
+
+  .panel-header .subtitle {
+    font-style: italic;
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  [data-panel="passion"]    .panel-header { border-color: var(--passion); }
+  [data-panel="mission"]    .panel-header { border-color: var(--mission); }
+  [data-panel="vocation"]   .panel-header { border-color: var(--vocation); }
+  [data-panel="profession"] .panel-header { border-color: var(--profession); }
+  [data-panel="passion"]    .panel-header h2 { color: var(--passion); }
+  [data-panel="mission"]    .panel-header h2 { color: var(--mission); }
+  [data-panel="vocation"]   .panel-header h2 { color: var(--vocation); }
+  [data-panel="profession"] .panel-header h2 { color: var(--profession); }
+
+  .question-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .question-block label {
+    display: block;
+    font-style: italic;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .ex-tag {
+    font-size: 0.75rem;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.15rem 0.6rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-style: italic;
+  }
+  .ex-tag:hover { color: var(--text); border-color: #555; }
+
+  .question-block textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.05rem;
+    resize: vertical;
+    min-height: 70px;
+    padding: 0.4rem 0;
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+  }
+  .question-block textarea:focus { border-bottom-color: #888; }
+
+  .nav-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .btn {
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.5rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+
+  .btn-next { background: transparent; color: var(--text); border: 1px solid #555; }
+  .btn-next:hover { border-color: var(--center); color: var(--center); }
+
+  .btn-generate { background: var(--center); color: #000; border: none; font-weight: 700; }
+  .btn-generate:hover { background: #e67e22; }
+
+  .progress-bar { height: 2px; background: var(--border); margin-bottom: 2rem; border-radius: 1px; overflow: hidden; width: 100%; max-width: 700px; }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--passion), var(--mission), var(--vocation), var(--profession));
+    transition: width 0.4s ease;
+  }
+
+  /* ── DIAGRAM ── */
+  .diagram-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 500px;
+    margin: 0 auto 2rem;
+  }
+
+  svg.ikigai-svg { width: 100%; height: 100%; overflow: visible; }
+
+  .synthesis {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+    width: 100%;
+  }
+
+  .synthesis h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    color: var(--center);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+
+  .synthesis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 580px) { .synthesis-grid { grid-template-columns: 1fr; } }
+
+  .syn-block { border-left: 2px solid; padding-left: 0.8rem; }
+  .syn-block.passion    { border-color: var(--passion); }
+  .syn-block.mission    { border-color: var(--mission); }
+  .syn-block.vocation   { border-color: var(--vocation); }
+  .syn-block.profession { border-color: var(--profession); }
+
+  .syn-block h4 {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .syn-block.passion    h4 { color: var(--passion); }
+  .syn-block.mission    h4 { color: var(--mission); }
+  .syn-block.vocation   h4 { color: var(--vocation); }
+  .syn-block.profession h4 { color: var(--profession); }
+
+  .syn-block ul { list-style: none; padding: 0; }
+  .syn-block ul li {
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+    padding-left: 0.8rem;
+    position: relative;
+    line-height: 1.5;
+  }
+  .syn-block ul li::before { content: '—'; position: absolute; left: 0; color: var(--muted); }
+
+  .ikigai-center {
+    background: rgba(243,156,18,0.07);
+    border: 1px solid rgba(243,156,18,0.4);
+    border-radius: 4px;
+    padding: 1.2rem 1.4rem;
+    margin-top: 0.5rem;
+    text-align: center;
+  }
+
+  .ikigai-center .ikigai-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--center);
+    margin-bottom: 0.6rem;
+  }
+
+  .ikigai-center p { font-style: italic; font-size: 1.1rem; color: var(--text); line-height: 1.8; }
+
+  .loading {
+    text-align: center;
+    padding: 3rem;
+    color: var(--muted);
+    font-style: italic;
+    font-size: 1.1rem;
+  }
+
+  .export-row { display: flex; gap: 0.8rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
+
+  .export-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Cinzel', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.5rem 1.2rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .export-btn:hover { color: var(--text); border-color: #555; }
+
+  .restart-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Cinzel', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.5rem 1.2rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .restart-btn:hover { color: var(--passion); border-color: var(--passion); }
+</style>
+</head>
+<body>
+
+<!-- ══════════ ÉCRAN D'ACCUEIL ══════════ -->
+<div id="screen-intro">
+  <p class="kanji">生き甲斐</p>
+  <h1>Ikigai</h1>
+  <p>Découvre ta raison d'être.</p>
+  <p class="definition">
+    L'ikigai est un concept japonais qui désigne ce qui donne du sens à ta vie —
+    le point de convergence entre ce que tu aimes, ce dont le monde a besoin,
+    ce pour quoi tu es doué, et ce pour quoi on peut te rémunérer.
+  </p>
+
+  <div class="circles-preview">
+    <span class="circle-badge p">Ce que tu aimes</span>
+    <span class="circle-badge m">Ce dont le monde a besoin</span>
+    <span class="circle-badge v">Ce pour quoi tu es doué</span>
+    <span class="circle-badge r">Ce pour quoi on te paie</span>
+  </div>
+
+  <div class="name-row">
+    <input type="text" id="user-name" placeholder="Ton prénom (facultatif)" maxlength="40" />
+    <button class="btn-start" onclick="startApp()">Commencer →</button>
+  </div>
+</div>
+
+<!-- ══════════ APPLICATION ══════════ -->
+<div id="screen-app">
+
+  <header>
+    <h1>Mon Ikigai</h1>
+    <p class="for-name" id="header-subtitle">Explore les 4 dimensions de ta raison d'être</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="passion">① Passion</button>
+    <button class="tab-btn" data-tab="mission">② Mission</button>
+    <button class="tab-btn" data-tab="vocation">③ Vocation</button>
+    <button class="tab-btn" data-tab="profession">④ Profession</button>
+    <button class="tab-btn" data-tab="diagram">✦ Synthèse</button>
+  </div>
+
+  <div class="main">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress" style="width:20%"></div>
+    </div>
+
+    <!-- ── PASSION ── -->
+    <div class="panel active" id="panel-passion" data-panel="passion">
+      <div class="panel-header">
+        <h2>Ce que tu aimes</h2>
+        <span class="subtitle">Ce qui te fait vibrer, indépendamment de toute contrainte matérielle ou sociale</span>
+      </div>
+
+      <div class="question-block">
+        <label>Quelles activités te font perdre la notion du temps ?</label>
+        <div class="examples">
+          <span class="ex-tag" onclick="appendEx('p1', this)">créer des choses</span>
+          <span class="ex-tag" onclick="appendEx('p1', this)">enseigner / transmettre</span>
+          <span class="ex-tag" onclick="appendEx('p1', this)">résoudre des problèmes</span>
+          <span class="ex-tag" onclick="appendEx('p1', this)">écrire / raconter</span>
+          <span class="ex-tag" onclick="appendEx('p1', this)">organiser / planifier</span>
+          <span class="ex-tag" onclick="appendEx('p1', this)">aider les autres</span>
+          <span class="ex-tag" onclick="appendEx('p1', this)">explorer / voyager</span>
+          <span class="ex-tag" onclick="appendEx('p1', this)">construire / fabriquer</span>
+        </div>
+        <textarea id="p1" placeholder="Décris ce que tu fais quand tu es dans ton élément…"></textarea>
+      </div>
+
+      <div class="question-block">
+        <label>Qu'est-ce qui t'anime dans ton projet ou ton idée actuelle ?</label>
+        <div class="examples">
+          <span class="ex-tag" onclick="appendEx('p2', this)">l'aspect créatif</span>
+          <span class="ex-tag" onclick="appendEx('p2', this)">l'impact humain</span>
+          <span class="ex-tag" onclick="appendEx('p2', this)">la liberté</span>
+          <span class="ex-tag" onclick="appendEx('p2', this)">le défi technique</span>
+          <span class="ex-tag" onclick="appendEx('p2', this)">la narration</span>
+          <span class="ex-tag" onclick="appendEx('p2', this)">l'entrepreneuriat</span>
+          <span class="ex-tag" onclick="appendEx('p2', this)">l'innovation</span>
+        </div>
+        <textarea id="p2" placeholder="Ce qui te donne de l'énergie même quand c'est difficile…"></textarea>
+      </div>
+
+      <div class="question-block">
+        <label>Si l'argent n'était pas un problème, comment passerais-tu tes journées ?</label>
+        <div class="examples">
+          <span class="ex-tag" onclick="appendEx('p3', this)">créer des contenus</span>
+          <span class="ex-tag" onclick="appendEx('p3', this)">former des gens</span>
+          <span class="ex-tag" onclick="appendEx('p3', this)">concevoir des expériences</span>
+          <span class="ex-tag" onclick="appendEx('p3', this)">voyager et documenter</span>
+          <span class="ex-tag" onclick="appendEx('p3', this)">développer des outils</span>
+          <span class="ex-tag" onclick="appendEx('p3', this)">accompagner des projets</span>
+        </div>
+        <textarea id="p3" placeholder="Décris ta journée idéale sans contrainte…"></textarea>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn btn-next" onclick="goTab('mission')">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- ── MISSION ── -->
+    <div class="panel" id="panel-mission" data-panel="mission">
+      <div class="panel-header">
+        <h2>Ce dont le monde a besoin</h2>
+        <span class="subtitle">L'utilité réelle de ton projet ou de tes compétences pour les autres</span>
+      </div>
+
+      <div class="question-block">
+        <label>Quel problème concret résous-tu (ou voudrais-tu résoudre) pour les autres ?</label>
+        <div class="examples">
+          <span class="ex-tag" onclick="appendEx('m1', this)">manque de lien social</span>
+          <span class="ex-tag" onclick="appendEx('m1', this)">accès à l'éducation</span>
+          <span class="ex-tag" onclick="appendEx('m1', this)">santé & bien-être</span>
+          <span class="ex-tag" onclick="appendEx('m1', this)">accessibilité financière</span>
+          <span class="ex-tag" onclick="appendEx('m1', this)">gain de temps</span>
+          <span class="ex-tag" onclick="appendEx('m1', this)">inclusion / diversité</span>
+          <span class="ex-tag" onclick="appendEx('m1', this)">environnement</span>
+          <span class="ex-tag" onclick="appendEx('m1', this)">créativité bloquée</span>
+        </div>
+        <textarea id="m1" placeholder="Ex : les gens manquent de… / il n'existe pas encore de… / les gens galèrent avec…"></textarea>
+      </div>
+
+      <div class="question-block">
+        <label>Quelle valeur apportes-tu que peu d'autres proposent ?</label>
+        <div class="examples">
+          <span class="ex-tag" onclick="appendEx('m2', this)">accessibilité</span>
+          <span class="ex-tag" onclick="appendEx('m2', this)">authenticité</span>
+          <span class="ex-tag" onclick="appendEx('m2', this)">simplicité</span>
+          <span class="ex-tag" onclick="appendEx('m2', this)">profondeur</span>
+          <span class="ex-tag" onclick="appendEx('m2', this)">personnalisation</span>
+          <span class="ex-tag" onclick="appendEx('m2', this)">bienveillance</span>
+          <span class="ex-tag" onclick="appendEx('m2', this)">pragmatisme</span>
+        </div>
+        <textarea id="m2" placeholder="Ce qui différencie ton approche de ce qui existe déjà…"></textarea>
+      </div>
+
+      <div class="question-block">
+        <label>À qui ton projet manquerait-il s'il n'existait pas ?</label>
+        <div class="examples">
+          <span class="ex-tag" onclick="appendEx('m3', this)">familles</span>
+          <span class="ex-tag" onclick="appendEx('m3', this)">jeunes adultes</span>
+          <span class="ex-tag" onclick="appendEx('m3', this)">personnes isolées</span>
+          <span class="ex-tag" onclick="appendEx('m3', this)">professionnels en reconversion</span>
+          <span class="ex-tag" onclick="appendEx('m3', this)">entrepreneurs</span>
+          <span class="ex-tag" onclick="appendEx('m3', this)">seniors</span>
+          <span class="ex-tag" onclick="appendEx('m3', this)">enfants / ados</span>
+        </div>
+        <textarea id="m3" placeholder="Décris ta cible idéale et en quoi tu l'aides vraiment…"></textarea>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn btn-next" onclick="goTab('passion')">← Retour</button>
+        <button class="btn btn-next" onclick="goTab('vocation')">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- ── VOCATION ── -->
+    <div class="panel" id="panel-vocation" data-panel="vocation">
+      <div class="panel-header">
+        <h2>Ce pour quoi tu es doué</h2>
+        <span class="subtitle">Tes compétences réelles — acquises, naturelles, ou les deux</span>
+      </div>
+
+      <div class="question-block">
+        <label>Quelles sont tes compétences principales (techniques ou humaines) ?</label>
+        <div class="examples">
+          <span class="ex-tag" onclick="appendEx('v1', this)">développement web</span>
+          <span class="ex-tag" onclick="appendEx('v1', this)">design graphique</span>
+          <span class="ex-tag" onclick="appendEx('v1', this)">écriture / rédaction</span>
+          <span class="ex-tag" onclick="appendEx('v1', this)">gestion de projet</span>
+          <span class="ex-tag" onclick="appendEx('v1', this)">communication</span>
+          <span class="ex-tag" onclick="appendEx('v1', this)">analyse de données</span>
+          <span class="ex-tag" onclick="appendEx('v1', this)">pédagogie</span>
+          <span class="ex-tag" onclick="appendEx('v1', this)">leadership</span>
+          <span class="ex-tag" onclick="appendEx('v1', this)">vente / négociation</span>
+        </div>
+        <textarea id="v1" placeholder="Liste les compétences que tu maîtrises vraiment bien…"></textarea>
+      </div>
+
+      <div class="question-block">
+        <label>Qu'est-ce que tu fais mieux que la plupart des gens autour de toi ?</label>
+        <div class="examples">
+          <span class="ex-tag" onclick="appendEx('v2', this)">expliquer des choses complexes simplement</span>
+          <span class="ex-tag" onclick="appendEx('v2', this)">trouver des solutions créatives</span>
+          <span class="ex-tag" onclick="appendEx('v2', this)">fédérer une équipe</span>
+          <span class="ex-tag" onclick="appendEx('v2', this)">aller vite à l'essentiel</span>
+          <span class="ex-tag" onclick="appendEx('v2', this)">créer de la confiance</span>
+        </div>
+        <textarea id="v2" placeholder="Ce que d'autres personnes viennent te demander spontanément…"></textarea>
+      </div>
+
+      <div class="question-block">
+        <label>Qu'est-ce que des gens t'ont déjà dit que tu faisais particulièrement bien ?</label>
+        <div class="examples">
+          <span class="ex-tag" onclick="appendEx('v3', this)">retours de clients</span>
+          <span class="ex-tag" onclick="appendEx('v3', this)">compliments de collègues</span>
+          <span class="ex-tag" onclick="appendEx('v3', this)">avis de proches</span>
+          <span class="ex-tag" onclick="appendEx('v3', this)">récompenses / reconnaissances</span>
+        </div>
+        <textarea id="v3" placeholder="Souviens-toi des retours positifs reçus, même informels…"></textarea>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn btn-next" onclick="goTab('mission')">← Retour</button>
+        <button class="btn btn-next" onclick="goTab('profession')">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- ── PROFESSION ── -->
+    <div class="panel" id="panel-profession" data-panel="profession">
+      <div class="panel-header">
+        <h2>Ce pour quoi on peut te payer</h2>
+        <span class="subtitle">Le modèle économique réel, envisagé, ou à explorer</span>
+      </div>
+
+      <div class="question-block">
+        <label>Comment envisages-tu (ou comment génères-tu déjà) des revenus avec ton projet ou tes compétences ?</label>
+        <div class="examples">
+          <span class="ex-tag" onclick="appendEx('r1', this)">freelance / prestation</span>
+          <span class="ex-tag" onclick="appendEx('r1', this)">produit numérique</span>
+          <span class="ex-tag" onclick="appendEx('r1', this)">abonnement / SaaS</span>
+          <span class="ex-tag" onclick="appendEx('r1', this)">formation / coaching</span>
+          <span class="ex-tag" onclick="appendEx('r1', this)">e-commerce</span>
+          <span class="ex-tag" onclick="appendEx('r1', this)">salariat</span>
+          <span class="ex-tag" onclick="appendEx('r1', this)">consulting</span>
+          <span class="ex-tag" onclick="appendEx('r1', this)">création de contenu</span>
+        </div>
+        <textarea id="r1" placeholder="Décris ton modèle économique actuel ou souhaité…"></textarea>
+      </div>
+
+      <div class="question-block">
+        <label>Quelle est ta cible principale et quel budget elle peut raisonnablement allouer ?</label>
+        <div class="examples">
+          <span class="ex-tag" onclick="appendEx('r2', this)">particuliers (5–20€/mois)</span>
+          <span class="ex-tag" onclick="appendEx('r2', this)">PME (500–2000€/projet)</span>
+          <span class="ex-tag" onclick="appendEx('r2', this)">grandes entreprises</span>
+          <span class="ex-tag" onclick="appendEx('r2', this)">collectivités / associations</span>
+          <span class="ex-tag" onclick="appendEx('r2', this)">étudiants / jeunes</span>
+        </div>
+        <textarea id="r2" placeholder="Ex : familles avec enfants, budget loisir 10–15€ / PME, budget marketing 500–1000€…"></textarea>
+      </div>
+
+      <div class="question-block">
+        <label>Y a-t-il des sources de revenus complémentaires que tu n'as pas encore explorées ?</label>
+        <div class="examples">
+          <span class="ex-tag" onclick="appendEx('r3', this)">affiliation</span>
+          <span class="ex-tag" onclick="appendEx('r3', this)">licences / royalties</span>
+          <span class="ex-tag" onclick="appendEx('r3', this)">partenariats B2B</span>
+          <span class="ex-tag" onclick="appendEx('r3', this)">formations en ligne</span>
+          <span class="ex-tag" onclick="appendEx('r3', this)">print-on-demand</span>
+          <span class="ex-tag" onclick="appendEx('r3', this)">subventions / aides</span>
+          <span class="ex-tag" onclick="appendEx('r3', this)">events / ateliers</span>
+        </div>
+        <textarea id="r3" placeholder="Brainstorme librement sur ce que tu n'as pas encore tenté…"></textarea>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn btn-next" onclick="goTab('vocation')">← Retour</button>
+        <button class="btn btn-generate" onclick="generateSynthesis()">✦ Révéler mon Ikigai</button>
+      </div>
+    </div>
+
+    <!-- ── SYNTHÈSE ── -->
+    <div class="panel" id="panel-diagram" data-panel="diagram">
+      <div id="synthesis-output" style="width:100%">
+        <p style="color:var(--muted);font-style:italic;text-align:center;padding:3rem 0">
+          Remplis les quatre quadrants puis clique sur « Révéler mon Ikigai ».
+        </p>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /screen-app -->
+
+<script>
+/* ── INTRO ── */
+function startApp() {
+  const name = document.getElementById('user-name').value.trim();
+  if (name) {
+    document.getElementById('header-subtitle').textContent = 'L\'ikigai de ' + name;
+  }
+  document.getElementById('screen-intro').style.display = 'none';
+  document.getElementById('screen-app').style.display = 'block';
+}
+
+document.getElementById('user-name').addEventListener('keydown', e => {
+  if (e.key === 'Enter') startApp();
+});
+
+/* ── NAVIGATION ── */
+const PROGRESS = { passion:20, mission:40, vocation:60, profession:80, diagram:100 };
+
+function goTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.getElementById('progress').style.width = PROGRESS[name] + '%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => goTab(btn.dataset.tab));
+});
+
+/* ── EXEMPLES CLIQUABLES ── */
+function appendEx(id, el) {
+  const ta = document.getElementById(id);
+  const val = ta.value.trim();
+  const tag = el.textContent.trim();
+  ta.value = val ? val + ', ' + tag : tag;
+  ta.focus();
+}
+
+/* ── COLLECTE ── */
+function collect() {
+  return {
+    passion:    [document.getElementById('p1').value, document.getElementById('p2').value, document.getElementById('p3').value].filter(Boolean).join(' | '),
+    mission:    [document.getElementById('m1').value, document.getElementById('m2').value, document.getElementById('m3').value].filter(Boolean).join(' | '),
+    vocation:   [document.getElementById('v1').value, document.getElementById('v2').value, document.getElementById('v3').value].filter(Boolean).join(' | '),
+    profession: [document.getElementById('r1').value, document.getElementById('r2').value, document.getElementById('r3').value].filter(Boolean).join(' | '),
+  };
+}
+
+/* ── GÉNÉRATION ── */
+async function generateSynthesis() {
+  goTab('diagram');
+  const data = collect();
+  const out = document.getElementById('synthesis-output');
+  const name = document.getElementById('user-name').value.trim();
+
+  out.innerHTML = '<div class="loading">Révélation en cours…</div>';
+
+  const prompt = `Tu es un coach de développement personnel et de projet. À partir des éléments d'ikigai ci-dessous${name ? ' pour ' + name : ''}, produis une synthèse structurée en JSON strict (aucun texte avant ou après, aucun backtick markdown).
+
+Structure JSON attendue (respecte exactement ces clés) :
+{
+  "passion_points": ["résumé concis point 1", "résumé concis point 2", "résumé concis point 3"],
+  "mission_points": ["résumé concis point 1", "résumé concis point 2", "résumé concis point 3"],
+  "vocation_points": ["résumé concis point 1", "résumé concis point 2", "résumé concis point 3"],
+  "profession_points": ["résumé concis point 1", "résumé concis point 2", "résumé concis point 3"],
+  "intersections": {
+    "passion_mission": "Ce que représente l'intersection Passion+Mission : la Mission de vie (ce pour quoi tu te lèves le matin)",
+    "mission_vocation": "Intersection Mission+Vocation : la Vocation (ce pour quoi tu es fait)",
+    "vocation_profession": "Intersection Vocation+Profession : la Profession (ce que tu peux faire durablement)",
+    "profession_passion": "Intersection Profession+Passion : la Passion rémunérée (ce qui te nourrit sans te vider)"
+  },
+  "ikigai": "Formulation de l'ikigai central : 2 à 3 phrases percutantes, personnalisées, inspirantes",
+  "tensions": ["tension ou angle mort identifié 1", "tension ou angle mort identifié 2"],
+  "prochaine_action": "Une recommandation concrète et immédiate, actionnables dès cette semaine"
+}
+
+Consignes : sois précis, synthétique et bienveillant. Chaque point de résumé doit tenir en moins de 12 mots. L'ikigai doit être formulé à la 2e personne du singulier, de façon inspirante.
+
+DONNÉES :
+- Ce que j'aime (Passion) : ${data.passion || '(non renseigné)'}
+- Ce dont le monde a besoin (Mission) : ${data.mission || '(non renseigné)'}
+- Ce pour quoi je suis doué (Vocation) : ${data.vocation || '(non renseigné)'}
+- Ce pour quoi on peut me payer (Profession) : ${data.profession || '(non renseigné)'}`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2048,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const result = await resp.json();
+    const raw = result.content.map(b => b.text || '').join('');
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('Réponse IA invalide — réessaie');
+    const d = JSON.parse(jsonMatch[0]);
+    renderDiagram(d, name);
+
+  } catch(e) {
+    out.innerHTML = `
+      <div style="color:#c0392b;padding:2rem;text-align:center;font-style:italic">
+        Une erreur est survenue : ${e.message}.<br><br>
+        <button class="btn btn-next" onclick="generateSynthesis()" style="margin:0 auto">↺ Réessayer</button>
+      </div>`;
+  }
+}
+
+/* ── RENDU ── */
+function renderDiagram(d, name) {
+  const out = document.getElementById('synthesis-output');
+  const toList = arr => (Array.isArray(arr) ? arr : []).map(x => `<li>${x}</li>`).join('');
+
+  const svgDiagram = `
+  <svg class="ikigai-svg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="gP" cx="50%" cy="50%"><stop offset="0%" stop-color="#c0392b" stop-opacity="0.3"/><stop offset="100%" stop-color="#c0392b" stop-opacity="0.04"/></radialGradient>
+      <radialGradient id="gM" cx="50%" cy="50%"><stop offset="0%" stop-color="#2980b9" stop-opacity="0.3"/><stop offset="100%" stop-color="#2980b9" stop-opacity="0.04"/></radialGradient>
+      <radialGradient id="gV" cx="50%" cy="50%"><stop offset="0%" stop-color="#27ae60" stop-opacity="0.3"/><stop offset="100%" stop-color="#27ae60" stop-opacity="0.04"/></radialGradient>
+      <radialGradient id="gR" cx="50%" cy="50%"><stop offset="0%" stop-color="#8e44ad" stop-opacity="0.3"/><stop offset="100%" stop-color="#8e44ad" stop-opacity="0.04"/></radialGradient>
+    </defs>
+    <circle cx="150" cy="105" r="85" fill="url(#gP)" stroke="#c0392b" stroke-width="1" stroke-opacity="0.5"/>
+    <circle cx="195" cy="170" r="85" fill="url(#gR)" stroke="#8e44ad" stroke-width="1" stroke-opacity="0.5"/>
+    <circle cx="105" cy="170" r="85" fill="url(#gM)" stroke="#2980b9" stroke-width="1" stroke-opacity="0.5"/>
+    <circle cx="150" cy="215" r="85" fill="url(#gV)" stroke="#27ae60" stroke-width="1" stroke-opacity="0.5"/>
+    <text x="150" y="36" text-anchor="middle" fill="#e8524a" font-size="10" font-family="Cinzel, serif" letter-spacing="1">CE QUE TU AIMES</text>
+    <text x="267" y="148" text-anchor="middle" fill="#c070e0" font-size="10" font-family="Cinzel, serif" letter-spacing="0.5" transform="rotate(62,267,148)">CE POUR QUOI ON TE PAIE</text>
+    <text x="33" y="148" text-anchor="middle" fill="#4090d0" font-size="10" font-family="Cinzel, serif" letter-spacing="0.5" transform="rotate(-62,33,148)">CE DONT LE MONDE A BESOIN</text>
+    <text x="150" y="293" text-anchor="middle" fill="#45c07a" font-size="10" font-family="Cinzel, serif" letter-spacing="1">CE POUR QUOI TU ES DOUÉ</text>
+    <circle cx="150" cy="162" r="30" fill="#f39c12" fill-opacity="0.12" stroke="#f39c12" stroke-width="1.5"/>
+    <text x="150" y="158" text-anchor="middle" dominant-baseline="middle" fill="#f39c12" font-size="9" font-weight="bold" font-family="Cinzel, serif">IKIGAI</text>
+    <text x="150" y="171" text-anchor="middle" fill="#f39c12" font-size="8" font-family="serif">✦</text>
+    ${name ? `<text x="150" y="10" text-anchor="middle" fill="#7a7060" font-size="8" font-family="Crimson Pro, serif" font-style="italic">${name}</text>` : ''}
+  </svg>`;
+
+  out.innerHTML = `
+    <div class="diagram-container">${svgDiagram}</div>
+
+    <div class="synthesis">
+      <h3>Les quatre dimensions</h3>
+      <div class="synthesis-grid">
+        <div class="syn-block passion"><h4>Ce que tu aimes</h4><ul>${toList(d.passion_points)}</ul></div>
+        <div class="syn-block mission"><h4>Ce dont le monde a besoin</h4><ul>${toList(d.mission_points)}</ul></div>
+        <div class="syn-block vocation"><h4>Ce pour quoi tu es doué</h4><ul>${toList(d.vocation_points)}</ul></div>
+        <div class="syn-block profession"><h4>Ce pour quoi on te paie</h4><ul>${toList(d.profession_points)}</ul></div>
+      </div>
+    </div>
+
+    <div class="synthesis" style="margin-top:1rem">
+      <h3>Les intersections</h3>
+      <div class="synthesis-grid">
+        <div class="syn-block passion"><h4>Mission de vie</h4><ul><li>${d.intersections?.passion_mission || '—'}</li></ul></div>
+        <div class="syn-block mission"><h4>Vocation</h4><ul><li>${d.intersections?.mission_vocation || '—'}</li></ul></div>
+        <div class="syn-block vocation"><h4>Profession</h4><ul><li>${d.intersections?.vocation_profession || '—'}</li></ul></div>
+        <div class="syn-block profession"><h4>Passion rémunérée</h4><ul><li>${d.intersections?.profession_passion || '—'}</li></ul></div>
+      </div>
+      <div class="ikigai-center">
+        <div class="ikigai-title">✦ Ton Ikigai ✦</div>
+        <p>${d.ikigai || '—'}</p>
+      </div>
+    </div>
+
+    ${d.tensions?.length ? `
+    <div class="synthesis" style="margin-top:1rem;border-color:#3a3a3a">
+      <h3 style="color:#888">Tensions & angles morts</h3>
+      <ul style="list-style:none;padding:0">
+        ${d.tensions.map(t => `<li style="padding:0.35rem 0 0.35rem 1.2rem;position:relative;color:var(--muted);font-size:0.95rem;line-height:1.5"><span style="position:absolute;left:0;color:#555">⚠</span>${t}</li>`).join('')}
+      </ul>
+    </div>` : ''}
+
+    ${d.prochaine_action ? `
+    <div class="synthesis" style="margin-top:1rem;border-color:rgba(243,156,18,0.3)">
+      <h3>Prochaine action</h3>
+      <p style="font-style:italic;font-size:1.05rem;line-height:1.75;color:var(--text)">${d.prochaine_action}</p>
+    </div>` : ''}
+
+    <div class="export-row">
+      <button class="export-btn" onclick="window.print()">⎙ Imprimer / PDF</button>
+      <button class="restart-btn" onclick="location.reload()">↺ Recommencer</button>
+    </div>
+    <p style="text-align:center;margin-top:2.5rem;font-size:0.8rem;color:#3a3530;letter-spacing:0.08em;font-family:'Cinzel',serif">
+      fait avec ✦ par <a href="https://rlcodeworks.fr" target="_blank" style="color:#4a4540;text-decoration:none;border-bottom:1px solid #3a3530">RL CodeWorks</a>
+    </p>
+  `;
+}
+</script>
+</body>
+</html>
