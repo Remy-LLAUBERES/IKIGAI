@@ -817,13 +817,29 @@ DONNÉES :
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-5',
         max_tokens: 2048,
         messages: [{ role: 'user', content: prompt }]
       })
     });
 
-    const result = await resp.json();
+    const bodyText = await resp.text();
+    let result;
+    try {
+      result = JSON.parse(bodyText);
+    } catch (_) {
+      throw new Error('Le serveur a renvoyé une réponse non-JSON (HTTP ' + resp.status + '). Vérifie la configuration de la fonction.');
+    }
+
+    if (!resp.ok) {
+      const msg = (result && (result.error?.message || result.error || result.message)) || ('Erreur HTTP ' + resp.status);
+      throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
+    }
+
+    if (!Array.isArray(result.content)) {
+      throw new Error('Réponse IA inattendue — réessaie');
+    }
+
     const raw = result.content.map(b => b.text || '').join('');
     const jsonMatch = raw.match(/\{[\s\S]*\}/);
     if (!jsonMatch) throw new Error('Réponse IA invalide — réessaie');
