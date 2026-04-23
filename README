@@ -1,4 +1,6 @@
-# ✦ Ikigai Interactif
+![Ikigai Interactif](banner.svg)
+
+# Ikigai Interactif
 
 Un outil web autonome pour explorer et formaliser son ikigai, propulsé par l'IA.
 
@@ -7,6 +9,8 @@ Un outil web autonome pour explorer et formaliser son ikigai, propulsé par l'IA
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES2020-yellow?style=flat-square)
 ![Claude API](https://img.shields.io/badge/Claude-Sonnet_4-blueviolet?style=flat-square)
 ![Licence](https://img.shields.io/badge/Licence-MIT-green?style=flat-square)
+
+🔗 **[Accéder à l'outil en ligne](https://remy-llauberes.github.io/IKIGAI/)**
 
 ---
 
@@ -45,8 +49,8 @@ Cet outil guide l'utilisateur à travers les quatre dimensions, puis génère vi
 Aucune installation requise. Le fichier `ikigai-universel.html` est entièrement autonome.
 
 ```bash
-git clone https://github.com/ton-user/ikigai-interactif.git
-cd ikigai-interactif
+git clone https://github.com/remy-llauberes/IKIGAI.git
+cd IKIGAI
 # Ouvrir ikigai-universel.html dans un navigateur
 ```
 
@@ -58,7 +62,7 @@ Pour l'héberger en ligne, déposer simplement le fichier sur n'importe quel hé
 
 L'outil utilise l'**API Anthropic Claude** directement depuis le navigateur. La clé API est injectée automatiquement par la plateforme Claude.ai lors de l'utilisation via les Artifacts.
 
-Pour un déploiement autonome (hors Claude.ai), il faut ajouter la clé dans les headers de la requête fetch :
+Pour un déploiement autonome (hors Claude.ai), ajouter la clé dans les headers de la requête fetch :
 
 ```javascript
 headers: {
@@ -75,9 +79,9 @@ headers: {
 ## Structure du projet
 
 ```
-ikigai-interactif/
-├── ikigai-universel.html   # Outil universel (version publique)
-├── ikigai-perso.html       # Version personnalisée (optionnel)
+IKIGAI/
+├── ikigai-universel.html   # Outil principal
+├── banner.svg              # Bannière du README
 └── README.md
 ```
 
@@ -92,9 +96,9 @@ Tout le code (HTML, CSS, JavaScript) est contenu dans un seul fichier pour facil
 | Couleurs des cercles | Variables CSS `:root` en haut du fichier |
 | Questions des onglets | Balises `<label>` dans chaque `question-block` |
 | Exemples cliquables | Balises `<span class="ex-tag">` |
-| Modèle IA utilisé | Paramètre `model` dans la fonction `generateSynthesis()` |
+| Modèle IA utilisé | Paramètre `model` dans `generateSynthesis()` |
 | Prompt de synthèse | Variable `prompt` dans `generateSynthesis()` |
-| Lien footer | Attribut `href` du lien RL CodeWorks en bas de `renderDiagram()` |
+| Lien footer | Attribut `href` du lien RL CodeWorks dans `renderDiagram()` |
 
 ---
 
