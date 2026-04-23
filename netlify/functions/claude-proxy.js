@@ -1,7 +1,19 @@
 exports.handler = async function (event) {
-  // Refuser les méthodes autres que POST
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, body: "Method Not Allowed" };
+  }
+
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return {
+      statusCode: 500,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({
+        error: { type: "config_error", message: "ANTHROPIC_API_KEY n'est pas configurée côté serveur." },
+      }),
+    };
   }
 
   try {
@@ -15,20 +27,25 @@ exports.handler = async function (event) {
       body: event.body,
     });
 
-    const data = await response.json();
-
+    const text = await response.text();
     return {
       statusCode: response.status,
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
       },
-      body: JSON.stringify(data),
+      body: text,
     };
   } catch (err) {
     return {
-      statusCode: 500,
-      body: JSON.stringify({ error: err.message }),
+      statusCode: 502,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({
+        error: { type: "proxy_error", message: err.message },
+      }),
     };
   }
 };

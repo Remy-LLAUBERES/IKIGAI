@@ -817,13 +817,28 @@ DONNÉES :
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-5',
         max_tokens: 2048,
         messages: [{ role: 'user', content: prompt }]
       })
     });
 
-    const result = await resp.json();
+    let result;
+    try {
+      result = await resp.json();
+    } catch {
+      throw new Error('Réponse serveur illisible (HTTP ' + resp.status + ')');
+    }
+
+    if (!resp.ok || result.error) {
+      const msg = result?.error?.message || ('HTTP ' + resp.status);
+      throw new Error(msg);
+    }
+
+    if (!Array.isArray(result.content)) {
+      throw new Error('Réponse IA inattendue — réessaie');
+    }
+
     const raw = result.content.map(b => b.text || '').join('');
     const jsonMatch = raw.match(/\{[\s\S]*\}/);
     if (!jsonMatch) throw new Error('Réponse IA invalide — réessaie');
