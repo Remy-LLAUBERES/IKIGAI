@@ -1,0 +1,99 @@
+<svg viewBox="0 0 900 220" xmlns="http://www.w3.org/2000/svg" width="900" height="220">
+  <defs>
+    <!-- Fond dégradé sombre -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a0a"/>
+      <stop offset="100%" stop-color="#141414"/>
+    </linearGradient>
+
+    <!-- Halos des cercles -->
+    <radialGradient id="gP" cx="50%" cy="50%">
+      <stop offset="0%" stop-color="#c0392b" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#c0392b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gM" cx="50%" cy="50%">
+      <stop offset="0%" stop-color="#2980b9" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#2980b9" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gV" cx="50%" cy="50%">
+      <stop offset="0%" stop-color="#27ae60" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#27ae60" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gR" cx="50%" cy="50%">
+      <stop offset="0%" stop-color="#8e44ad" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#8e44ad" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Halo central or -->
+    <radialGradient id="gC" cx="50%" cy="50%">
+      <stop offset="0%" stop-color="#f39c12" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#f39c12" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Grain texture -->
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feBlend in="SourceGraphic" mode="overlay" result="blend"/>
+      <feComposite in="blend" in2="SourceGraphic" operator="in"/>
+    </filter>
+
+    <!-- Clip arrondi -->
+    <clipPath id="rounded">
+      <rect width="900" height="220" rx="12"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#rounded)">
+    <!-- Fond -->
+    <rect width="900" height="220" fill="url(#bg)"/>
+
+    <!-- Grain overlay -->
+    <rect width="900" height="220" fill="#888" filter="url(#grain)" opacity="0.03"/>
+
+    <!-- Séparateur vertical -->
+    <line x1="580" y1="30" x2="580" y2="190" stroke="#2a2a2a" stroke-width="1"/>
+
+    <!-- ══ DIAGRAMME DROIT ══ -->
+    <!-- Cercles ikigai (miniature) -->
+    <circle cx="750" cy="95"  r="68" fill="url(#gP)" stroke="#c0392b" stroke-width="0.8" stroke-opacity="0.6"/>
+    <circle cx="785" cy="145" r="68" fill="url(#gR)" stroke="#8e44ad" stroke-width="0.8" stroke-opacity="0.6"/>
+    <circle cx="715" cy="145" r="68" fill="url(#gM)" stroke="#2980b9" stroke-width="0.8" stroke-opacity="0.6"/>
+    <circle cx="750" cy="175" r="68" fill="url(#gV)" stroke="#27ae60" stroke-width="0.8" stroke-opacity="0.6"/>
+
+    <!-- Centre ikigai -->
+    <circle cx="750" cy="132" r="22" fill="url(#gC)" stroke="#f39c12" stroke-width="1.2"/>
+    <text x="750" y="129" text-anchor="middle" dominant-baseline="middle" fill="#f39c12" font-size="8" font-family="Georgia, serif" font-weight="bold" letter-spacing="1">IKIGAI</text>
+    <text x="750" y="140" text-anchor="middle" fill="#f39c12" font-size="9" font-family="serif">✦</text>
+
+    <!-- Labels cercles -->
+    <text x="750" y="22"  text-anchor="middle" fill="#c0392b" font-size="7.5" font-family="Georgia, serif" letter-spacing="1.5" opacity="0.85">CE QUE TU AIMES</text>
+    <text x="860" y="118" text-anchor="middle" fill="#8e44ad" font-size="7" font-family="Georgia, serif" letter-spacing="1" opacity="0.85" transform="rotate(60,860,118)">CE POUR QUOI ON TE PAIE</text>
+    <text x="640" y="118" text-anchor="middle" fill="#2980b9" font-size="7" font-family="Georgia, serif" letter-spacing="1" opacity="0.85" transform="rotate(-60,640,118)">CE DONT LE MONDE A BESOIN</text>
+    <text x="750" y="208" text-anchor="middle" fill="#27ae60" font-size="7.5" font-family="Georgia, serif" letter-spacing="1.5" opacity="0.85">CE POUR QUOI TU ES DOUÉ</text>
+
+    <!-- ══ TEXTE GAUCHE ══ -->
+    <!-- Kanji -->
+    <text x="60" y="62" fill="#2a2520" font-size="52" font-family="Georgia, serif" font-weight="bold" letter-spacing="4">生き甲斐</text>
+
+    <!-- Titre principal -->
+    <text x="58" y="112" fill="#f39c12" font-size="54" font-family="Georgia, serif" font-weight="bold" letter-spacing="6">IKIGAI</text>
+
+    <!-- Ligne décorative -->
+    <line x1="58" y1="126" x2="310" y2="126" stroke="#f39c12" stroke-width="1" stroke-opacity="0.4"/>
+    <line x1="58" y1="129" x2="200" y2="129" stroke="#f39c12" stroke-width="0.4" stroke-opacity="0.25"/>
+
+    <!-- Sous-titre -->
+    <text x="59" y="153" fill="#7a7060" font-size="13" font-family="Georgia, serif" font-style="italic" letter-spacing="1">Découvre ta raison d'être</text>
+
+    <!-- Badges couleurs -->
+    <rect x="58"  y="168" width="10" height="10" rx="2" fill="#c0392b" opacity="0.8"/>
+    <rect x="78"  y="168" width="10" height="10" rx="2" fill="#2980b9" opacity="0.8"/>
+    <rect x="98"  y="168" width="10" height="10" rx="2" fill="#27ae60" opacity="0.8"/>
+    <rect x="118" y="168" width="10" height="10" rx="2" fill="#8e44ad" opacity="0.8"/>
+    <rect x="138" y="168" width="10" height="10" rx="2" fill="#f39c12" opacity="0.8"/>
+
+    <!-- Crédits bas gauche -->
+    <text x="59" y="200" fill="#3a3530" font-size="10" font-family="Georgia, serif" letter-spacing="1.5">fait avec ✦ par RL CodeWorks</text>
+  </g>
+</svg>
