@@ -36,7 +36,7 @@ Cet outil guide l'utilisateur à travers les quatre dimensions, puis génère vi
 ## Démo rapide
 
 ```
-1. Ouvrir ikigai-universel.html dans un navigateur
+1. Accéder à https://ikigai-rlcodeworks.netlify.app/
 2. Saisir un prénom (facultatif)
 3. Remplir les 4 onglets (Passion → Mission → Vocation → Profession)
 4. Cliquer sur "Révéler mon Ikigai"
@@ -44,35 +44,27 @@ Cet outil guide l'utilisateur à travers les quatre dimensions, puis génère vi
 
 ---
 
-## Installation
+## Installation & déploiement
 
-Aucune installation requise. Le fichier `ikigai-universel.html` est entièrement autonome.
+### Cloner le projet
 
 ```bash
 git clone https://github.com/remy-llauberes/IKIGAI.git
 cd IKIGAI
-# Ouvrir ikigai-universel.html dans un navigateur
 ```
 
-Pour l'héberger en ligne, déposer simplement le fichier sur n'importe quel hébergement statique (GitHub Pages, Netlify, hébergement mutualisé, etc.).
+### Déployer sur Netlify
 
----
+L'outil nécessite un proxy backend pour appeler l'API Anthropic (contrainte CORS). Le projet est préconfiguré pour Netlify :
 
-## Configuration de l'API
+1. Connecter le repo GitHub à [Netlify](https://app.netlify.com) → **Add new site** → **Import from Git**
+2. Ajouter la variable d'environnement dans **Site configuration** → **Environment variables** :
+   ```
+   ANTHROPIC_API_KEY = sk-ant-xxxxxxxxxxxxxxxx
+   ```
+3. Déclencher un déploiement — Netlify détecte automatiquement `netlify.toml` et déploie la fonction proxy
 
-L'outil utilise l'**API Anthropic Claude** directement depuis le navigateur. La clé API est injectée automatiquement par la plateforme Claude.ai lors de l'utilisation via les Artifacts.
-
-Pour un déploiement autonome (hors Claude.ai), ajouter la clé dans les headers de la requête fetch :
-
-```javascript
-headers: {
-  'Content-Type': 'application/json',
-  'x-api-key': 'sk-ant-VOTRE_CLE_ICI',
-  'anthropic-version': '2023-06-01'
-},
-```
-
-> ⚠️ Ne pas exposer de clé API en clair dans un fichier public. Utiliser une variable d'environnement ou un proxy backend pour une mise en production.
+> La clé API n'est jamais exposée côté navigateur — elle transite uniquement par la fonction serverless.
 
 ---
 
@@ -80,12 +72,14 @@ headers: {
 
 ```
 IKIGAI/
-├── ikigai-universel.html   # Outil principal
-├── banner.svg              # Bannière du README
+├── index.html                        # Application principale
+├── netlify.toml                      # Configuration Netlify
+├── netlify/
+│   └── functions/
+│       └── claude-proxy.js           # Proxy serverless vers l'API Anthropic
+├── banner.svg                        # Bannière du README
 └── README.md
 ```
-
-Tout le code (HTML, CSS, JavaScript) est contenu dans un seul fichier pour faciliter le partage et l'hébergement.
 
 ---
 
@@ -93,7 +87,7 @@ Tout le code (HTML, CSS, JavaScript) est contenu dans un seul fichier pour facil
 
 | Élément | Où modifier |
 |---|---|
-| Couleurs des cercles | Variables CSS `:root` en haut du fichier |
+| Couleurs des cercles | Variables CSS `:root` dans `index.html` |
 | Questions des onglets | Balises `<label>` dans chaque `question-block` |
 | Exemples cliquables | Balises `<span class="ex-tag">` |
 | Modèle IA utilisé | Paramètre `model` dans `generateSynthesis()` |
@@ -106,6 +100,7 @@ Tout le code (HTML, CSS, JavaScript) est contenu dans un seul fichier pour facil
 
 - **HTML/CSS/JS** vanilla — aucun framework
 - **[Claude Sonnet 4](https://www.anthropic.com)** (Anthropic) — génération de la synthèse
+- **Netlify Functions** — proxy serverless pour les appels API
 - **Google Fonts** — Cinzel + Crimson Pro
 - **SVG** natif — diagramme des 4 cercles
 
