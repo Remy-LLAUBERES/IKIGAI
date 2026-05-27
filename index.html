@@ -823,7 +823,20 @@ DONNÉES :
       })
     });
 
-    const result = await resp.json();
+    // Lire la réponse brute pour diagnostiquer
+    const rawText = await resp.text();
+
+    if (!resp.ok) {
+      throw new Error(`Erreur HTTP ${resp.status} : ${rawText.slice(0, 300)}`);
+    }
+
+    let result;
+    try {
+      result = JSON.parse(rawText);
+    } catch(parseErr) {
+      throw new Error(`Réponse proxy invalide : ${rawText.slice(0, 300)}`);
+    }
+
     const raw = result.content.map(b => b.text || '').join('');
     const jsonMatch = raw.match(/\{[\s\S]*\}/);
     if (!jsonMatch) throw new Error('Réponse IA invalide — réessaie');
@@ -833,7 +846,8 @@ DONNÉES :
   } catch(e) {
     out.innerHTML = `
       <div style="color:#c0392b;padding:2rem;text-align:center;font-style:italic">
-        Une erreur est survenue : ${e.message}.<br><br>
+        Une erreur est survenue :<br><br>
+        <code style="font-size:0.85rem;color:#e8a090;font-style:normal">${e.message}</code><br><br>
         <button class="btn btn-next" onclick="generateSynthesis()" style="margin:0 auto">↺ Réessayer</button>
       </div>`;
   }
