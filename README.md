@@ -10,7 +10,7 @@ Un outil web autonome pour explorer et formaliser son ikigai, propulsé par l'IA
 ![Claude API](https://img.shields.io/badge/Claude-Sonnet_4-blueviolet?style=flat-square)
 ![Licence](https://img.shields.io/badge/Licence-MIT-green?style=flat-square)
 
-🔗 **[Accéder à l'outil en ligne](https://remy-llauberes.github.io/IKIGAI/)**
+🔗 **[Accéder à l'outil en ligne](https://ikigai-rlcodeworks.netlify.app/)**
 
 ---
 
