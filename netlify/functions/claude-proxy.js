@@ -1,8 +1,70 @@
 // Modèle et paramètres fixés ici, côté serveur : le navigateur n'envoie que
 // les messages, pour que la clé API ne puisse pas servir à appeler un autre
 // modèle ou à générer des réponses illimitées.
-const MODEL = "claude-opus-5-5";
+const MODEL = "claude-sonnet-5-5";
 const MAX_TOKENS = 16000;
+
+// Format de la synthèse, garanti par l'API (sorties structurées) : plus de
+// JSON tronqué ou mal formé. Les clés correspondent à renderDiagram().
+const liste = { type: "array", items: { type: "string" } };
+const SCHEMA = {
+  type: "object",
+  properties: {
+    passion_points: liste,
+    mission_points: liste,
+    vocation_points: liste,
+    profession_points: liste,
+    intersections: {
+      type: "object",
+      properties: {
+        passion_mission: { type: "string" },
+        mission_vocation: { type: "string" },
+        vocation_profession: { type: "string" },
+        profession_passion: { type: "string" },
+      },
+      required: ["passion_mission", "mission_vocation", "vocation_profession", "profession_passion"],
+      additionalProperties: false,
+    },
+    pistes: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          titre: { type: "string" },
+          description: { type: "string" },
+          pourquoi_toi: { type: "string" },
+          premier_pas: { type: "string" },
+          comment_tester: { type: "string" },
+        },
+        required: ["titre", "description", "pourquoi_toi", "premier_pas", "comment_tester"],
+        additionalProperties: false,
+      },
+    },
+    ikigai: { type: "string" },
+    tensions: liste,
+    plan_30_jours: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          semaine: { type: "integer" },
+          action: { type: "string" },
+          resultat_attendu: { type: "string" },
+        },
+        required: ["semaine", "action", "resultat_attendu"],
+        additionalProperties: false,
+      },
+    },
+    prochaine_action: { type: "string" },
+    questions_a_approfondir: liste,
+  },
+  required: [
+    "passion_points", "mission_points", "vocation_points", "profession_points",
+    "intersections", "pistes", "ikigai", "tensions", "plan_30_jours",
+    "prochaine_action", "questions_a_approfondir",
+  ],
+  additionalProperties: false,
+};
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -49,9 +111,12 @@ exports.handler = async function (event) {
       body: JSON.stringify({
         model: MODEL,
         max_tokens: MAX_TOKENS,
-        // Synthèse simple : réflexion courte, pour répondre vite
-        // (les fonctions Netlify sont coupées au bout de quelques secondes)
-        output_config: { effort: "low" },
+        // "medium" : une vraie réflexion sur les recoupements, tout en restant
+        // sous la limite de 60 s des fonctions Netlify synchrones
+        output_config: {
+          effort: "medium",
+          format: { type: "json_schema", schema: SCHEMA },
+        },
         fallbacks: "default",
         messages,
       }),

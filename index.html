@@ -785,26 +785,22 @@ async function generateSynthesis() {
 
   out.innerHTML = '<div class="loading">Révélation en cours…</div>';
 
-  const prompt = `Tu es un coach de développement personnel et de projet. À partir des éléments d'ikigai ci-dessous${name ? ' pour ' + name : ''}, produis une synthèse structurée en JSON strict (aucun texte avant ou après, aucun backtick markdown).
+  // Le format JSON de la réponse est imposé côté serveur (schéma dans
+  // netlify/functions/claude-proxy.js) : le prompt ne décrit que le fond.
+  const prompt = `Tu accompagnes une personne${name ? ' (' + name + ')' : ''} qui a rempli les quatre cercles de son ikigai pour avancer sur son projet professionnel. Elle n'attend pas une synthèse inspirante : elle attend des pistes qu'elle peut tester dès maintenant. Une réponse qui pourrait s'appliquer à n'importe qui ne lui sert à rien.
 
-Structure JSON attendue (respecte exactement ces clés) :
-{
-  "passion_points": ["résumé concis point 1", "résumé concis point 2", "résumé concis point 3"],
-  "mission_points": ["résumé concis point 1", "résumé concis point 2", "résumé concis point 3"],
-  "vocation_points": ["résumé concis point 1", "résumé concis point 2", "résumé concis point 3"],
-  "profession_points": ["résumé concis point 1", "résumé concis point 2", "résumé concis point 3"],
-  "intersections": {
-    "passion_mission": "Ce que représente l'intersection Passion+Mission : la Mission de vie (ce pour quoi tu te lèves le matin)",
-    "mission_vocation": "Intersection Mission+Vocation : la Vocation (ce pour quoi tu es fait)",
-    "vocation_profession": "Intersection Vocation+Profession : la Profession (ce que tu peux faire durablement)",
-    "profession_passion": "Intersection Profession+Passion : la Passion rémunérée (ce qui te nourrit sans te vider)"
-  },
-  "ikigai": "Formulation de l'ikigai central : 2 à 3 phrases percutantes, personnalisées, inspirantes",
-  "tensions": ["tension ou angle mort identifié 1", "tension ou angle mort identifié 2"],
-  "prochaine_action": "Une recommandation concrète et immédiate, actionnables dès cette semaine"
-}
+Ce que doit contenir ta synthèse :
 
-Consignes : sois précis, synthétique et bienveillant. Chaque point de résumé doit tenir en moins de 12 mots. L'ikigai doit être formulé à la 2e personne du singulier, de façon inspirante.
+- Les quatre dimensions (passion_points, mission_points, vocation_points, profession_points) : 3 à 5 points chacune. Chaque point reprend un élément précis de ses réponses, avec ses mots quand c'est possible, et le reformule de façon utile. Pas de catégorie vague du type « la créativité » si elle a écrit « je retape des meubles anciens ».
+- Les intersections : pour chacune, une piste nommée (un métier, une offre, un type de projet, un public) qui croise réellement les deux cercles, et pourquoi elle découle de ses réponses.
+- pistes : 2 à 4 pistes concrètes, des plus réalistes aux plus ambitieuses. Pour chacune, décris à quoi elle ressemble au quotidien, pour qui, comment elle rapporte de l'argent, puis un premier pas réalisable en moins d'une semaine et un moyen simple de vérifier qu'elle tient la route (une personne à contacter, un test à faire, un chiffre à trouver).
+- ikigai : 2 à 3 phrases à la 2e personne du singulier, qui nomment ce qu'elle fait, pour qui et comment, plutôt qu'une formule abstraite.
+- tensions : les contradictions ou angles morts réels de ses réponses (par exemple un besoin de revenus stables face à une piste incertaine), formulés avec bienveillance mais sans les édulcorer.
+- plan_30_jours : 4 étapes, une par semaine, chacune avec un résultat vérifiable à la fin de la semaine.
+- prochaine_action : la toute première chose à faire, formulée de façon à pouvoir la faire aujourd'hui ou demain, en moins d'une heure.
+- questions_a_approfondir : si certaines réponses sont trop maigres ou trop vagues pour conclure, les questions précises qu'elle devrait se poser ; liste vide sinon.
+
+N'invente pas de compétences, d'expériences ou de contraintes qu'elle n'a pas mentionnées. Quand une piste suppose quelque chose qui n'est pas dans ses réponses, dis-le.
 
 DONNÉES :
 - Ce que j'aime (Passion) : ${data.passion || '(non renseigné)'}
@@ -908,6 +904,19 @@ function renderDiagram(d, name) {
       </div>
     </div>
 
+    ${d.pistes?.length ? `
+    <div class="synthesis" style="margin-top:1rem">
+      <h3>Pistes concrètes</h3>
+      ${d.pistes.map(p => `
+      <div class="syn-block" style="margin-bottom:1rem">
+        <h4>${p.titre}</h4>
+        <p style="margin:0.4rem 0;line-height:1.6">${p.description}</p>
+        <p style="margin:0.4rem 0;line-height:1.6;color:var(--muted)"><b>Pourquoi toi :</b> ${p.pourquoi_toi}</p>
+        <p style="margin:0.4rem 0;line-height:1.6"><b>Premier pas :</b> ${p.premier_pas}</p>
+        <p style="margin:0.4rem 0;line-height:1.6"><b>Pour vérifier :</b> ${p.comment_tester}</p>
+      </div>`).join('')}
+    </div>` : ''}
+
     ${d.tensions?.length ? `
     <div class="synthesis" style="margin-top:1rem;border-color:#3a3a3a">
       <h3 style="color:#888">Tensions & angles morts</h3>
@@ -920,6 +929,20 @@ function renderDiagram(d, name) {
     <div class="synthesis" style="margin-top:1rem;border-color:rgba(243,156,18,0.3)">
       <h3>Prochaine action</h3>
       <p style="font-style:italic;font-size:1.05rem;line-height:1.75;color:var(--text)">${d.prochaine_action}</p>
+    </div>` : ''}
+
+    ${d.plan_30_jours?.length ? `
+    <div class="synthesis" style="margin-top:1rem">
+      <h3>Plan sur 30 jours</h3>
+      <ul style="list-style:none;padding:0">
+        ${d.plan_30_jours.map(e => `<li style="padding:0.5rem 0;line-height:1.6;border-bottom:1px solid rgba(255,255,255,0.05)"><b>Semaine ${e.semaine} :</b> ${e.action}<br><span style="color:var(--muted)">→ ${e.resultat_attendu}</span></li>`).join('')}
+      </ul>
+    </div>` : ''}
+
+    ${d.questions_a_approfondir?.length ? `
+    <div class="synthesis" style="margin-top:1rem;border-color:#3a3a3a">
+      <h3 style="color:#888">À approfondir</h3>
+      <ul>${toList(d.questions_a_approfondir)}</ul>
     </div>` : ''}
 
     <div class="export-row">

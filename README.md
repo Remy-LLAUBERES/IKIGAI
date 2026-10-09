@@ -92,6 +92,7 @@ IKIGAI/
 | Exemples cliquables | Balises `<span class="ex-tag">` |
 | Modèle IA utilisé | Constante `MODEL` dans `netlify/functions/claude-proxy.js` |
 | Prompt de synthèse | Variable `prompt` dans `generateSynthesis()` |
+| Format de la synthèse (clés JSON) | Constante `SCHEMA` dans `netlify/functions/claude-proxy.js` (à garder cohérente avec `renderDiagram()`) |
 | Lien footer | Attribut `href` du lien RL CodeWorks dans `renderDiagram()` |
 
 ---
@@ -99,7 +100,7 @@ IKIGAI/
 ## Technologies
 
 - **HTML/CSS/JS** vanilla — aucun framework
-- **[Claude Opus 5.5](https://www.anthropic.com)** (Anthropic) — génération de la synthèse
+- **[Claude Sonnet 5.5](https://www.anthropic.com)** (Anthropic) — génération de la synthèse
 - **Netlify Functions** — proxy serverless pour les appels API
 - **Google Fonts** — Cinzel + Crimson Pro
 - **SVG** natif — diagramme des 4 cercles
